@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "./Title";
 import ProductItem from "./ProductItem";
+import { useSelector } from "react-redux";
 
 const LatestCollection = () => {
-  const { products } = useContext(ShopContext);
-
   const [latestProducts, setLatestProducts] = useState([]);
+  const products = useSelector((state) => state.shop.products);
 
   useEffect(() => {
     setLatestProducts(products.slice(0, 10));

@@ -1,15 +1,16 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ShopContext } from "../context/ShopContext";
+
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/cartSlice";
 
 const Product = () => {
   const { productId } = useParams();
-  const { products, currency } = useContext(ShopContext);
+  const products = useSelector((state) => state.shop.products);
+  const currency = useSelector((state) => state.shop.currency);
 
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState("");

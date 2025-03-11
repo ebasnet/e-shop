@@ -1,13 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ShopContext } from "../context/ShopContext";
+import React, { useEffect, useState } from "react";
+
 import { assets } from "../assets/assets";
 import Title from "../components/Title";
 import ProductItem from "../components/ProductItem";
 
+import { useSelector } from "react-redux";
+
 const Collection = () => {
+  const products = useSelector((state) => state.shop.products);
+  const search = useSelector((state) => state.shop.search);
+  const showSearch = useSelector((state) => state.shop.showSearch);
   // eslint-disable-next-line no-unused-vars
-  const { products, search, showSearch } = useContext(ShopContext);
+
   // eslint-disable-next-line no-unused-vars
+
+  // const { products, search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
 
   const [filterProducts, setFilterProducts] = useState([]);

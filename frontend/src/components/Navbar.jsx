@@ -1,12 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { Link, NavLink } from "react-router-dom";
-import { ShopContext } from "../context/ShopContext";
+
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const { setShowSearch } = useContext(ShopContext);
+  const setShowSearch = useSelector((state) => state.shop.setShowSearch);
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalItems = cartItems.length;
 
