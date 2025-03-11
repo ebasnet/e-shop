@@ -2,10 +2,13 @@ import React, { useContext, useState } from "react";
 import { assets } from "../assets/assets";
 import { Link, NavLink } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
   const { setShowSearch } = useContext(ShopContext);
+  const cartItems = useSelector((state) => state.cart.cartItems);
+  const totalItems = cartItems.length;
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -62,8 +65,12 @@ const Navbar = () => {
 
         <Link to="/cart" className="relative">
           <img src={assets.cart_icon} className="w-5  min-w-5 " alt="" />
-          <p className="absolute right-[-5px] bottom-[-5px] bg-black w-4 leading-4 rounded-full text-white text-[8px] text-center aspect-square">
-            10
+          <p>
+            {totalItems > 0 && (
+              <span className="absolute -right-1 -bottom-1 bg-black w-4 h-4 rounded-full text-white text-[10px] flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
           </p>
         </Link>
         <img
