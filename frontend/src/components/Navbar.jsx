@@ -3,7 +3,7 @@ import { assets } from "../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-const Navbar = () => {
+const Navbar = ({ setShowLogin }) => {
   const [visible, setVisible] = useState(false);
   const setShowSearch = useSelector((state) => state.shop.setShowSearch);
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -60,8 +60,18 @@ const Navbar = () => {
           />
           <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
             <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-              <p className="cursor-pointer hover:text-black">My Profile</p>
-              <p className="cursor-pointer hover:text-black">Orders</p>
+              <p
+                onClick={() => setShowLogin(true)}
+                className="cursor-pointer hover:text-black"
+              >
+                My Profile
+              </p>
+              <p
+                onClick={handleOrdersClick}
+                className="cursor-pointer hover:text-black"
+              >
+                Orders
+              </p>
               <p className="cursor-pointer hover:text-black">Logout</p>
             </div>
           </div>
