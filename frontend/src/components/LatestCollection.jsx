@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-undef */
 import React, { useEffect, useState } from "react";
-import { ShopContext } from "../context/ShopContext";
+
 import Title from "./Title";
 import ProductItem from "./ProductItem";
 import { useSelector } from "react-redux";

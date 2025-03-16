@@ -3,19 +3,35 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import cartReducer from "./cartSlice";
 import shopReducer from "./shopSlice";
+import orderReducer from "./orderSlice";
 
-const persistConfig = {
+// Persist configuration for the cart reducer
+const cartPersistConfig = {
   key: "cart",
   storage,
 };
 
-const persistedCartReducer = persistReducer(persistConfig, cartReducer);
+// Persist configuration for the orders reducer
+const ordersPersistConfig = {
+  key: "orders",
+  storage,
+};
 
+// Create persisted reducers
+const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
+const persistedOrdersReducer = persistReducer(
+  ordersPersistConfig,
+  orderReducer
+);
+
+// Configure the store
 export const store = configureStore({
   reducer: {
     cart: persistedCartReducer,
     shop: shopReducer,
+    orders: persistedOrdersReducer,
   },
 });
 
+// Create the persistor
 export const persistor = persistStore(store);

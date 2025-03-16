@@ -1,83 +1,181 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   removeFromCart,
-  increaseQuantity,
-  decreaseQuantity,
+  updateQuantity,
+  calculateTotals,
 } from "../redux/cartSlice";
+import Title from "../components/Title";
+import { products, assets } from "../assets/assets";
+import { toast } from "react-toastify";
+import CartTotal from "../components/CartTotal"; // Import the CartTotal component
+import { useNavigate } from "react-router"; // Import useNavigate
+import { placeOrder } from "../redux/orderSlice"; // Import placeOrder action
 
 const Cart = () => {
+  const navigate = useNavigate(); // Use useNavigate to handle navigation
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
+  const [cartData, setCartData] = useState([]);
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  useEffect(() => {
+    const tempData = [];
+    cartItems.forEach((item) => {
+      if (item.quantity > 0) {
+        tempData.push({
+          _id: item.id,
+          size: item.size,
+          quantity: item.quantity,
+        });
+      }
+    });
+    setCartData(tempData);
 
-  const deliveryFee = subtotal >= 500 ? 0 : 50;
-  const total = subtotal + deliveryFee;
+    // Recalculate totals whenever cartItems change
+    dispatch(calculateTotals());
+  }, [cartItems, dispatch]);
+
+  const handleQuantityChange = (id, size, newQuantity) => {
+    if (newQuantity <= 0) return;
+    dispatch(updateQuantity({ id, size, quantity: newQuantity }));
+    toast.info("Quantity updated", { icon: "🔁" });
+  };
+
+  const handleRemoveFromCart = (id, size) => {
+    dispatch(removeFromCart({ id, size }));
+    toast.error("Item removed from cart", { icon: "🗑️" });
+  };
+
+  if (cartData.length === 0) {
+    return (
+      <div className="text-center py-6">
+        <p>Your cart is empty. Start shopping!</p>
+      </div>
+    );
+  }
+
+  // Handle Place Order navigation and dispatch placeOrder action
+  const handlePlaceOrder = () => {
+    const orderDetails = {
+      orderNumber: Date.now(), // Use current timestamp as order number
+      status: "Processing",
+      deliveryDate: "March 20, 2025", // Mock delivery date
+      items: cartItems,
+      subtotal: cartItems.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      ),
+      deliveryFee:
+        cartItems.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        ) >= 500
+          ? 0
+          : 50,
+      total:
+        cartItems.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        ) +
+        (cartItems.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        ) >= 500
+          ? 0
+          : 50),
+    };
+
+    dispatch(placeOrder(orderDetails)); // Dispatch placeOrder action to store the order
+
+    // Navigate to the orders page
+    navigate("/payment");
+  };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-semibold mb-6">My Cart</h2>
-      {cartItems.length === 0 ? (
-        <p className="text-gray-500">No items in cart.</p>
-      ) : (
-        <>
-          {cartItems.map((item) => (
+    <div className="border-t pt-14">
+      <div className="text-2xl mb-3">
+        <Title text1={"YOUR"} text2={"CART"} />
+      </div>
+      <div>
+        {cartData.map((item, index) => {
+          const productData = products.find(
+            (product) => product._id === item._id
+          );
+          return (
             <div
-              key={item.id}
-              className="flex justify-between items-center p-4 border-b border-gray-300 mb-4"
+              key={index}
+              className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
             >
-              <div className="flex-shrink-0 w-24 h-24">
+              <div className="flex items-start gap-6">
                 <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover rounded-md"
+                  className="w-16 sm:w-20"
+                  src={productData.image[0]}
+                  alt=""
                 />
+                <div>
+                  <p className="text-xs sm:text-lg font-medium">
+                    {productData.name}
+                  </p>
+                  <div className="flex items-center gap-5 mt-2">
+                    <p>Rs. {productData.price}</p>
+                    <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
+                      {item.size}
+                    </p>
+                  </div>
+                </div>
               </div>
-
-              <div className="flex flex-col justify-between ml-4">
-                <p className="font-medium text-lg">{item.name}</p>
-                <span className="text-gray-500">
-                  Rs.{item.price} × {item.quantity} = Rs.
-                  {item.price * item.quantity}
-                </span>
-              </div>
-
-              <div className="flex gap-2">
+              <div className="flex items-center gap-4">
                 <button
-                  onClick={() => dispatch(increaseQuantity({ id: item.id }))}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-                >
-                  +
-                </button>
-                <button
-                  onClick={() => dispatch(decreaseQuantity({ id: item.id }))}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
+                  onClick={() =>
+                    handleQuantityChange(item._id, item.size, item.quantity - 1)
+                  }
+                  className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
                 >
                   -
                 </button>
+                <input
+                  className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 text-center"
+                  type="number"
+                  min={1}
+                  value={item.quantity}
+                  onChange={(e) =>
+                    handleQuantityChange(
+                      item._id,
+                      item.size,
+                      parseInt(e.target.value)
+                    )
+                  }
+                />
                 <button
-                  onClick={() => dispatch(removeFromCart({ id: item.id }))}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md"
+                  onClick={() =>
+                    handleQuantityChange(item._id, item.size, item.quantity + 1)
+                  }
+                  className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
                 >
-                  Remove
+                  +
                 </button>
               </div>
+              <button
+                onClick={() => handleRemoveFromCart(item._id, item.size)}
+                className="w-4 sm:w-5 cursor-pointer"
+              >
+                <img className="w-full" src={assets.bin_icon} alt="remove" />
+              </button>
             </div>
-          ))}
-
-          <div className="border-t pt-4">
-            <p className="text-lg font-medium">Subtotal: Rs.{subtotal}</p>
-            <p className="text-lg font-medium">
-              Delivery Fee: Rs.{deliveryFee === 0 ? "Free" : deliveryFee}
-            </p>
-            <p className="text-xl font-bold mt-2">Total: Rs.{total}</p>
-          </div>
-        </>
-      )}
+          );
+        })}
+      </div>
+      {/* Cart Total Section */}
+      <CartTotal /> {/* Use CartTotal component here */}
+      {/* Place Order Button */}
+      <div className="mt-6 flex justify-between items-center flex-col sm:flex-row gap-4">
+        <button
+          onClick={handlePlaceOrder}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
+        >
+          Place Order
+        </button>
+      </div>
     </div>
   );
 };

@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
 import { assets } from "../assets/assets";
 import RelatedProducts from "../components/RelatedProducts";
-
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../redux/cartSlice";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Product = () => {
   const { productId } = useParams();
   const products = useSelector((state) => state.shop.products);
   const currency = useSelector((state) => state.shop.currency);
-
   const [productData, setProductData] = useState(false);
   const [image, setImage] = useState("");
   const [size, setSize] = useState("");
@@ -34,9 +33,11 @@ const Product = () => {
 
   const handleAddToCart = () => {
     if (!size) {
-      alert("Please select a size first!");
+      toast.error("Please select a size first!", { icon: "⚠️" });
       return;
     }
+
+    const cartItemKey = `${productData._id}-${size}`;
 
     dispatch(
       addToCart({
@@ -45,8 +46,11 @@ const Product = () => {
         price: productData.price,
         image: productData.image[0],
         size: size,
+        key: cartItemKey,
       })
     );
+
+    toast.success("Item added to cart", { icon: "🛒" });
   };
 
   return productData ? (
