@@ -171,7 +171,7 @@ const Cart = () => {
       <div className="mt-6 flex justify-between items-center flex-col sm:flex-row gap-4">
         <button
           onClick={handlePlaceOrder}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
+          className="border bg-black  text-white text-sm px-8 py-4 text-sm"
         >
           Place Order
         </button>

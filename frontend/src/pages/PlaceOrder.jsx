@@ -18,46 +18,46 @@ const PlaceOrder = () => {
 
         <div className="flex gap-3">
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="First Name"
           />
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="Last Name"
           />
         </div>
         <input
-          className="border border-gray-300 rounded py-1.5 px-3.5 w-full "
+          className="border border-gray-300 rounded py-1.5 px-3.5 w-full  focus:outline-none focus:border-gray-400"
           type="email"
           placeholder="Email Address"
         />
         <input
-          className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+          className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
           type="text"
           placeholder="Street"
         />
         <div className="flex gap-3">
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="City"
           />
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="Province"
           />
         </div>
         <div className="flex gap-3">
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="number"
             placeholder="Zipcode"
           />
           <input
-            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="number"
             placeholder="Phone Number"
           />
