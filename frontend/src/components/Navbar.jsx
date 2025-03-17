@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setShowSearch } from "../redux/shopSlice";
 
-const Navbar = ({ setShowLogin }) => {
+const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const setShowSearch = useSelector((state) => state.shop.setShowSearch);
+  const showSearch = useSelector((state) => state.shop.showSearch);
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleOrdersClick = () => {
     navigate("/orders"); // Navigate to the orders page
   };
+
   // Calculate the total quantity of items in the cart
   const totalItems = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -46,26 +49,24 @@ const Navbar = ({ setShowLogin }) => {
 
       <div className="flex items-center gap-7">
         <img
-          onClick={() => setShowSearch(true)}
+          onClick={() => dispatch(setShowSearch(true))}
           src={assets.search_icon}
           className="w-5 cursor-pointer"
           alt=""
         />
 
         <div className="relative group">
-          <img
-            src={assets.profile_icon}
-            className="w-5 cursor-pointer"
-            alt=""
-          />
+          <Link to="/login">
+            <img
+              src={assets.profile_icon}
+              className="w-5 cursor-pointer"
+              alt=""
+            />
+          </Link>
+
           <div className="group-hover:block hidden absolute dropdown-menu right-0 pt-4">
             <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded">
-              <p
-                onClick={() => setShowLogin(true)}
-                className="cursor-pointer hover:text-black"
-              >
-                My Profile
-              </p>
+              <p className="cursor-pointer hover:text-black">My Profile</p>
               <p
                 onClick={handleOrdersClick}
                 className="cursor-pointer hover:text-black"

@@ -12,20 +12,17 @@ import Orders from "./pages/Orders";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
-import { useState } from "react";
-import Login from "./components/Login";
 
 // ✅ Import Toastify
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Login from "./pages/Login";
 
 const App = () => {
-  const [showLogin, setShowLogin] = useState(false);
   return (
     <>
-      {showLogin ? <Login setShowLogin={setShowLogin} /> : <></>}
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] ">
-        <Navbar setShowLogin={setShowLogin} />
+        <Navbar />
         <SearchBar />
         <ToastContainer
           position="top-right"
@@ -40,7 +37,7 @@ const App = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/product/:productId" element={<Product />} />
           <Route path="/cart" element={<Cart />} />
-          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/login" element={<Login />} />
           <Route path="/payment" element={<PlaceOrder />} />
           <Route path="/orders" element={<Orders />} />
         </Routes>

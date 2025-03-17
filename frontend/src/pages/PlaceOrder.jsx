@@ -1,183 +1,130 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router";
-import { toast } from "react-toastify";
 import Title from "../components/Title";
-import { placeOrder } from "../redux/orderSlice"; // Import the placeOrder action
+import CartTotal from "../components/CartTotal";
+import { assets } from "../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const PlaceOrder = () => {
+  const [method, setMethod] = useState("cod");
+
   const navigate = useNavigate();
-  const cartItems = useSelector((state) => state.cart.cartItems);
-  const currency = useSelector((state) => state.shop.currency);
-  const deliveryFee = useSelector((state) => state.shop.delivery_fee);
-  const subtotal = useSelector((state) => state.cart.subtotal);
-
-  const dispatch = useDispatch();
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    address: "",
-    phone: "",
-    paymentMethod: "Cash On Delivery", // Default payment method
-  });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleConfirmOrder = () => {
-    if (
-      !formData.fullName ||
-      !formData.email ||
-      !formData.address ||
-      !formData.phone
-    ) {
-      toast.error("Please fill in all the details!");
-      return;
-    }
-
-    // Prepare order details
-    const orderDetails = {
-      orderNumber: Date.now(), // Use current timestamp as the order number
-      status: "Processing", // Default status, can be updated later
-      deliveryDate: "March 20, 2025", // Example delivery date, you can calculate it dynamically
-      items: cartItems, // Items in the cart
-      subtotal: subtotal,
-      deliveryFee: subtotal >= 500 ? 0 : deliveryFee, // Delivery fee logic
-      total: subtotal + (subtotal >= 500 ? 0 : deliveryFee), // Total calculation
-      customer: formData, // Customer information (Name, Email, Address, Phone)
-    };
-
-    // Dispatch placeOrder action to save order to the store
-    dispatch(placeOrder({ orderDetails }));
-
-    toast.success("Order placed successfully!", { icon: "✔️" });
-
-    // Navigate to the orders page
-    navigate("/orders");
-  };
-
-  const calculatedTotal = subtotal + (subtotal >= 500 ? 0 : deliveryFee); // Add delivery fee based on subtotal
-
   return (
-    <div className="pt-14 max-w-4xl mx-auto px-4">
-      <div className="text-3xl font-semibold mb-6 text-center">
-        <Title text1={"PLACE"} text2={"ORDER"} />
+    <div className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t">
+      {/* left side */}
+      <div className="flex flex-col gap-4 w-full sm:max-w-[480px]">
+        <div className=" text-xl sm:text-2xl my-3">
+          <Title text1={"DELIVERY"} text2={"INFORMATION"} />
+        </div>
+
+        <div className="flex gap-3">
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="text"
+            placeholder="First Name"
+          />
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="text"
+            placeholder="Last Name"
+          />
+        </div>
+        <input
+          className="border border-gray-300 rounded py-1.5 px-3.5 w-full "
+          type="email"
+          placeholder="Email Address"
+        />
+        <input
+          className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+          type="text"
+          placeholder="Street"
+        />
+        <div className="flex gap-3">
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="text"
+            placeholder="City"
+          />
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="text"
+            placeholder="Province"
+          />
+        </div>
+        <div className="flex gap-3">
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="number"
+            placeholder="Zipcode"
+          />
+          <input
+            className="border border-gray-300 rounded py-1.5 px-3.5 w-full"
+            type="number"
+            placeholder="Phone Number"
+          />
+        </div>
       </div>
+      {/* right  side */}
+      <div className="mt-8 ">
+        <div className="mt-8 min-w-80">
+          <CartTotal />
+        </div>
+        <div className="mt-12">
+          <Title text1={"PAYMENT"} text2={"METHOD"} />
+          {/* payment selection */}
 
-      {/* Form for User Information */}
-      <div className="bg-white shadow-lg rounded-lg p-6 space-y-6">
-        <h3 className="text-xl font-medium">Shipping Information</h3>
-        <form>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your full name"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your email"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your phone number"
-              />
-            </div>
-
-            <div className="sm:col-span-2 mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Address
-              </label>
-              <textarea
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your shipping address"
-                rows="4"
-              ></textarea>
-            </div>
-
-            <div className="sm:col-span-2 mb-4">
-              <label className="block text-sm font-medium text-gray-600 mb-2">
-                Payment Method
-              </label>
-              <select
-                name="paymentMethod"
-                value={formData.paymentMethod}
-                onChange={handleInputChange}
-                className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          <div className="flex  gap-3 flex-col lg:flex-row">
+            <div
+              onClick={() => setMethod("esewa")}
+              className="flex items-center gap-3 border pt-2 px-3 cursor-pointer"
+            >
+              <p
+                className={`min-w-3.5 h-3.5  border rounded-full ${
+                  method === "esewa" ? "bg-green-400" : ""
+                }`}
               >
-                <option value="Cash On Delivery">Cash On Delivery</option>
-                <option value="Card">Credit/Debit Card</option>
-                <option value="Paypal">Paypal</option>
-              </select>
+                {" "}
+              </p>
+              <img className="h-9 mx-4" src={assets.esewa_logo} alt="" />
+            </div>
+            <div
+              onClick={() => setMethod("khalti")}
+              className="flex items-center gap-3 border pt-2 px-3 cursor-pointer "
+            >
+              <p
+                className={`min-w-3.5 h-3.5  border rounded-full ${
+                  method === "khalti" ? "bg-green-400" : ""
+                }`}
+              >
+                {" "}
+              </p>
+              <img className="h-9 mx-4" src={assets.khalti_logo} alt="" />
+            </div>
+
+            <div
+              onClick={() => setMethod("cod")}
+              className="flex items-center gap-3 border pt-2 px-3 cursor-pointer"
+            >
+              <p
+                className={`min-w-3.5 h-3.5  border rounded-full ${
+                  method === "cod" ? "bg-green-400" : ""
+                }`}
+              >
+                {" "}
+              </p>
+              <p className="text-gray-500 text-sm font-medium mx-4">
+                CASH ON DELIVERY
+              </p>
             </div>
           </div>
-        </form>
-      </div>
-
-      {/* Order Totals */}
-      <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
-        <h3 className="text-xl font-medium mb-4">Order Summary</h3>
-        <p className="text-sm text-gray-700">
-          Subtotal: {currency} {subtotal}
-        </p>
-        <p className="text-sm text-gray-700">
-          Delivery Fee: {currency} {subtotal >= 500 ? 0 : deliveryFee}
-        </p>
-        <p className="font-bold text-lg mt-2">
-          Total: {currency} {calculatedTotal}
-        </p>
-      </div>
-
-      {/* Buttons */}
-      <div className="mt-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <button
-          onClick={() => navigate("/cart")}
-          className="px-6 py-3 bg-gray-200 text-black rounded-lg hover:bg-gray-300 w-full sm:w-auto"
-        >
-          Back to Cart
-        </button>
-        <button
-          onClick={handleConfirmOrder}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
-        >
-          Confirm Order
-        </button>
+          <div className="w-full text-end mt-8">
+            <button
+              onClick={() => navigate("/orders")}
+              className="bg-black text-white px-16 py-3 text-sm"
+            >
+              PLACE ORDER
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
