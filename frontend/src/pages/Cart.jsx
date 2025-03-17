@@ -8,12 +8,11 @@ import {
 import Title from "../components/Title";
 import { products, assets } from "../assets/assets";
 import { toast } from "react-toastify";
-import CartTotal from "../components/CartTotal"; // Import the CartTotal component
-import { useNavigate } from "react-router"; // Import useNavigate
-import { placeOrder } from "../redux/orderSlice"; // Import placeOrder action
+import CartTotal from "../components/CartTotal";
+import { useNavigate } from "react-router";
 
 const Cart = () => {
-  const navigate = useNavigate(); // Use useNavigate to handle navigation
+  const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
   const [cartData, setCartData] = useState([]);
@@ -30,8 +29,6 @@ const Cart = () => {
       }
     });
     setCartData(tempData);
-
-    // Recalculate totals whenever cartItems change
     dispatch(calculateTotals());
   }, [cartItems, dispatch]);
 
@@ -46,57 +43,13 @@ const Cart = () => {
     toast.error("Item removed from cart", { icon: "🗑️" });
   };
 
-  if (cartData.length === 0) {
-    return (
-      <div className="text-center py-6">
-        <p>Your cart is empty. Start shopping!</p>
-      </div>
-    );
-  }
-
-  // Handle Place Order navigation and dispatch placeOrder action
-  const handlePlaceOrder = () => {
-    const orderDetails = {
-      orderNumber: Date.now(), // Use current timestamp as order number
-      status: "Processing",
-      deliveryDate: "March 20, 2025", // Mock delivery date
-      items: cartItems,
-      subtotal: cartItems.reduce(
-        (total, item) => total + item.price * item.quantity,
-        0
-      ),
-      deliveryFee:
-        cartItems.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        ) >= 500
-          ? 0
-          : 50,
-      total:
-        cartItems.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        ) +
-        (cartItems.reduce(
-          (total, item) => total + item.price * item.quantity,
-          0
-        ) >= 500
-          ? 0
-          : 50),
-    };
-
-    dispatch(placeOrder(orderDetails)); // Dispatch placeOrder action to store the order
-
-    // Navigate to the orders page
-    navigate("/payment");
-  };
-
   return (
-    <div className="border-t pt-14">
-      <div className="text-2xl mb-3">
+    <div className="relative pt-5 sm:pt-14 min-h-[80vh] border-t pb-40">
+      <div className="text-xl sm:text-2xl my-3">
         <Title text1={"YOUR"} text2={"CART"} />
       </div>
-      <div>
+
+      <div className="flex flex-col gap-6">
         {cartData.map((item, index) => {
           const productData = products.find(
             (product) => product._id === item._id
@@ -104,7 +57,7 @@ const Cart = () => {
           return (
             <div
               key={index}
-              className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
+              className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_1.2fr_0.5fr] items-center gap-4"
             >
               <div className="flex items-start gap-6">
                 <img
@@ -113,7 +66,7 @@ const Cart = () => {
                   alt=""
                 />
                 <div>
-                  <p className="text-xs sm:text-lg font-medium">
+                  <p className="text-sm sm:text-lg font-medium">
                     {productData.name}
                   </p>
                   <div className="flex items-center gap-5 mt-2">
@@ -124,6 +77,7 @@ const Cart = () => {
                   </div>
                 </div>
               </div>
+
               <div className="flex items-center gap-4">
                 <button
                   onClick={() =>
@@ -134,7 +88,7 @@ const Cart = () => {
                   -
                 </button>
                 <input
-                  className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 text-center"
+                  className="border w-10 sm:w-12 px-1 text-center"
                   type="number"
                   min={1}
                   value={item.quantity}
@@ -155,6 +109,7 @@ const Cart = () => {
                   +
                 </button>
               </div>
+
               <button
                 onClick={() => handleRemoveFromCart(item._id, item.size)}
                 className="w-4 sm:w-5 cursor-pointer"
@@ -165,16 +120,20 @@ const Cart = () => {
           );
         })}
       </div>
-      {/* Cart Total Section */}
-      <CartTotal /> {/* Use CartTotal component here */}
-      {/* Place Order Button */}
-      <div className="mt-6 flex justify-between items-center flex-col sm:flex-row gap-4">
-        <button
-          onClick={handlePlaceOrder}
-          className="border bg-black  text-white text-sm px-8 py-4 text-sm"
-        >
-          Place Order
-        </button>
+
+      {/* Bottom Left Cart Total */}
+      <div className="flex justify-end my-20">
+        <div className="w-full sm:w-[450px]">
+          <CartTotal />
+          <div className="w-full text-end">
+            <button
+              onClick={() => navigate("/placeorder")}
+              className="text-white bg-black  text-sm my-8 px-8 py-3"
+            >
+              PROCEED TO CHECKOUT
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
