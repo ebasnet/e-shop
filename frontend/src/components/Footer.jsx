@@ -8,10 +8,10 @@ const Footer = () => {
         <div>
           <img src={assets.logo} className="mb-5 w-32 rounded-full shadow-lg" />
           <p className="w-full md:w-2/3 text-gray-600">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aspernatur
-            consequatur voluptatibus natus eligendi corrupti suscipit officiis
-            deleniti, consectetur enim voluptate ratione nostrum nihil quas unde
-            ullam dolores perspiciatis, quidem praesentium?
+            E-shop is your one-stop destination for quality products and smooth
+            shopping experience. We offer fast delivery, reliable service, and a
+            growing selection of items to meet all your needs. Shop with
+            confidence and convenience, anytime.
           </p>
         </div>
 

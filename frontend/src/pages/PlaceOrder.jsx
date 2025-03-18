@@ -21,17 +21,20 @@ const PlaceOrder = () => {
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="First Name"
+            required
           />
           <input
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="Last Name"
+            required
           />
         </div>
         <input
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full  focus:outline-none focus:border-gray-400"
           type="email"
           placeholder="Email Address"
+          required
         />
         <input
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
@@ -118,7 +121,7 @@ const PlaceOrder = () => {
           </div>
           <div className="w-full text-end mt-8">
             <button
-              onClick={() => navigate("/orders")}
+              onClick={() => navigate("/success")}
               className="bg-black text-white px-16 py-3 text-sm"
             >
               PLACE ORDER

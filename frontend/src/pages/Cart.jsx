@@ -18,6 +18,9 @@ const Cart = () => {
   const [cartData, setCartData] = useState([]);
 
   useEffect(() => {
+    // Temporary log to check the length and structure of cartItems
+    console.log("Cart Items:", cartItems);
+
     const tempData = [];
     cartItems.forEach((item) => {
       if (item.quantity > 0) {
@@ -50,75 +53,93 @@ const Cart = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        {cartData.map((item, index) => {
-          const productData = products.find(
-            (product) => product._id === item._id
-          );
-          return (
-            <div
-              key={index}
-              className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_1.2fr_0.5fr] items-center gap-4"
-            >
-              <div className="flex items-start gap-6">
-                <img
-                  className="w-16 sm:w-20"
-                  src={productData.image[0]}
-                  alt=""
-                />
-                <div>
-                  <p className="text-sm sm:text-lg font-medium">
-                    {productData.name}
-                  </p>
-                  <div className="flex items-center gap-5 mt-2">
-                    <p>Rs. {productData.price}</p>
-                    <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
-                      {item.size}
+        {cartData.length === 0 ? (
+          <p>No items in the cart.</p>
+        ) : (
+          cartData.map((item, index) => {
+            const productData = products.find(
+              (product) => product._id === item._id
+            );
+
+            // Log to debug why only one item is showing
+            console.log("Product Data:", productData);
+
+            if (!productData) return null; // Skip rendering if productData is not found
+
+            return (
+              <div
+                key={index}
+                className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_1.2fr_0.5fr] items-center gap-4"
+              >
+                <div className="flex items-start gap-6">
+                  <img
+                    className="w-16 sm:w-20"
+                    src={productData.image?.[0] || assets.defaultImage} // Fallback to a default image if missing
+                    alt={productData.name}
+                  />
+                  <div>
+                    <p className="text-sm sm:text-lg font-medium">
+                      {productData.name}
                     </p>
+                    <div className="flex items-center gap-5 mt-2">
+                      <p>Rs. {productData.price}</p>
+                      <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50">
+                        {item.size}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4">
+                  <button
+                    onClick={() =>
+                      handleQuantityChange(
+                        item._id,
+                        item.size,
+                        item.quantity - 1
+                      )
+                    }
+                    className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                  >
+                    -
+                  </button>
+                  <input
+                    className="border w-10 sm:w-12 px-1 text-center"
+                    type="number"
+                    min={1}
+                    value={item.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(
+                        item._id,
+                        item.size,
+                        parseInt(e.target.value)
+                      )
+                    }
+                  />
+                  <button
+                    onClick={() =>
+                      handleQuantityChange(
+                        item._id,
+                        item.size,
+                        item.quantity + 1
+                      )
+                    }
+                    className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
-                  onClick={() =>
-                    handleQuantityChange(item._id, item.size, item.quantity - 1)
-                  }
-                  className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                  onClick={() => handleRemoveFromCart(item._id, item.size)}
+                  className="w-4 sm:w-5 cursor-pointer"
                 >
-                  -
-                </button>
-                <input
-                  className="border w-10 sm:w-12 px-1 text-center"
-                  type="number"
-                  min={1}
-                  value={item.quantity}
-                  onChange={(e) =>
-                    handleQuantityChange(
-                      item._id,
-                      item.size,
-                      parseInt(e.target.value)
-                    )
-                  }
-                />
-                <button
-                  onClick={() =>
-                    handleQuantityChange(item._id, item.size, item.quantity + 1)
-                  }
-                  className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
-                >
-                  +
+                  <img className="w-full" src={assets.bin_icon} alt="remove" />
                 </button>
               </div>
-
-              <button
-                onClick={() => handleRemoveFromCart(item._id, item.size)}
-                className="w-4 sm:w-5 cursor-pointer"
-              >
-                <img className="w-full" src={assets.bin_icon} alt="remove" />
-              </button>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
 
       {/* Bottom Left Cart Total */}

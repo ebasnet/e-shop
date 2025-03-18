@@ -28,7 +28,7 @@ const Orders = () => {
                     {item.price}
                   </p>
                   <p>Quantity: 1</p>
-                  <p>Size: M</p>
+                  <p>Size: L</p>
                 </div>
                 <p className="mt-2">
                   Date: <span className="text-gray-40">25 Aug,2025</span>

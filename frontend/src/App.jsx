@@ -12,11 +12,14 @@ import Orders from "./pages/Orders";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SearchBar from "./components/SearchBar";
+import Success from "./pages/Success";
 
 // ✅ Import Toastify
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
+import UserProfile from "./pages/UserProfile";
+import Logout from "./pages/Logout";
 
 const App = () => {
   return (
@@ -40,6 +43,9 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/placeorder" element={<PlaceOrder />} />
           <Route path="/orders" element={<Orders />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/profile" element={<UserProfile />} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
         <Footer />
       </div>
