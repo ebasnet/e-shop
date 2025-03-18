@@ -22,13 +22,18 @@ const UserProfile = () => {
 
   return (
     <div className="flex flex-col items-center p-6 space-y-6 w-full sm:w-96 bg-white rounded-lg shadow-lg">
+      <div className="inline-flex items-center gap-2 mb-2 mt-10">
+        <p className="prata-regular text-3xl">User Profile</p>
+        <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
+      </div>
+
       <div className="flex flex-col items-center space-y-4">
         {/* Profile Picture */}
-        <img
+        {/* <img
           src={user.profilePic}
           alt="Profile"
           className="w-24 h-24 rounded-full object-cover"
-        />
+        /> */}
         {/* Edit Button */}
         <button
           onClick={() => setIsEditing(!isEditing)}
