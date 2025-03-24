@@ -3,11 +3,33 @@ import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { placeOrder } from "../redux/orderSlice";
 
 const PlaceOrder = () => {
   const [method, setMethod] = useState("cod");
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const cartItems = useSelector((state) => state.cart.cartItems);
+
+  const handlePlaceOrder = () => {
+    if (cartItems.length === 0) return;
+
+    const orderDetails = {
+      id: Date.now(),
+      items: cartItems.map((item) => ({
+        ...item,
+        image: item.image,
+      })),
+      placedAt: new Date().toLocaleString(),
+    };
+
+    dispatch(placeOrder(orderDetails));
+
+    navigate("/success");
+  };
+
   return (
     <div className="flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t">
       {/* left side */}
@@ -121,7 +143,8 @@ const PlaceOrder = () => {
           </div>
           <div className="w-full text-end mt-8">
             <button
-              onClick={() => navigate("/success")}
+              onClick={handlePlaceOrder}
+              // onClick={() => navigate("/success")}
               className="bg-black text-white px-16 py-3 text-sm"
             >
               PLACE ORDER
