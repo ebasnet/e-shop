@@ -3,9 +3,9 @@ import { useSelector, useDispatch } from "react-redux";
 import Title from "../components/Title";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
+import { addToCart } from "../redux/cartSlice";
 import CartTotal from "../components/CartTotal";
-import { clearOrders } from "../redux/orderSlice"; // Import the action
-import { toast } from "react-toastify";
+// Import the action
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -27,6 +27,11 @@ const Orders = () => {
     });
     setOrderData(tempData);
   }, [orders]);
+
+  const handleReorder = (item) => {
+    const updatedItem = { ...item, quantity: 1 }; // Ensure the quantity is at least 1
+    dispatch(addToCart(updatedItem)); // Dispatch the addToCart action
+  };
 
   return (
     <div className="relative pt-5 sm:pt-14 min-h-[80vh] border-t pb-40">
@@ -70,6 +75,18 @@ const Orders = () => {
               <div className="flex flex-col items-end">
                 <div className="text-sm text-gray-500">Order placed at:</div>
                 <div className="font-medium">{item.placedAt}</div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 ml-2">
+                <button
+                  className="bg-yellow-400 px-4 py-2 rounded text-black font-medium hover:bg-yellow-500"
+                  onClick={() => handleReorder(item)} // Add item to the cart
+                >
+                  Buy it again
+                </button>
+                <button className="border px-4 py-2 rounded hover:bg-gray-100">
+                  Track package
+                </button>
               </div>
             </div>
           ))
