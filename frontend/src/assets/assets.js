@@ -1,4 +1,5 @@
 import p_img1 from "./p_img1.png";
+import p_img from "./p_img.png";
 import p_img2_1 from "./p_img2_1.png";
 import p_img2_2 from "./p_img2_2.png";
 import p_img2_3 from "./p_img2_3.png";
@@ -101,7 +102,7 @@ export const products = [
     description:
       "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
     price: 1000,
-    image: [p_img1],
+    image: [p_img],
     category: "Women",
     subCategory: "Topwear",
     sizes: ["S", "M", "L"],
@@ -123,10 +124,10 @@ export const products = [
   },
   {
     _id: "KID-TOP-001",
-    name: "Girls Round Neck Cotton Top",
+    name: "Kids Pink Ruffle Frock",
     description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 1800,
+      "A cute and lightweight ruffle frock designed for kids, perfect for everyday wear or special outings. Made from soft, breathable fabric for all-day comfort and playful movement.",
+    price: 2500,
     image: [p_img3],
     category: "Kids",
     subCategory: "Topwear",
