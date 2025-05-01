@@ -10,7 +10,16 @@ const UserProfile = () => {
   useEffect(() => {
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
-      setUser(JSON.parse(loggedInUser));
+      const parsedUser = JSON.parse(loggedInUser);
+
+      // Set defaults if fields are missing
+      const userWithDefaults = {
+        ...parsedUser,
+        mobile: parsedUser.mobile || "",
+        address: parsedUser.address || "",
+      };
+
+      setUser(userWithDefaults);
     } else {
       navigate("/login");
     }
@@ -30,9 +39,7 @@ const UserProfile = () => {
     alert("Profile updated successfully!");
   };
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
     <div className="flex flex-col items-center p-10 max-w-lg mx-auto bg-white rounded-xl shadow-xl space-y-8">
@@ -49,6 +56,7 @@ const UserProfile = () => {
       </button>
 
       <div className="w-full space-y-6">
+        {/* Name */}
         <div>
           <label className="block text-sm text-gray-700 font-medium">
             Name
@@ -66,6 +74,7 @@ const UserProfile = () => {
           )}
         </div>
 
+        {/* Email */}
         <div>
           <label className="block text-sm text-gray-700 font-medium">
             Email
@@ -83,6 +92,7 @@ const UserProfile = () => {
           )}
         </div>
 
+        {/* Password */}
         <div>
           <label className="block text-sm text-gray-700 font-medium">
             Password
@@ -109,6 +119,7 @@ const UserProfile = () => {
           )}
         </div>
 
+        {/* Mobile Number */}
         <div>
           <label className="block text-sm text-gray-700 font-medium">
             Mobile Number
@@ -119,13 +130,15 @@ const UserProfile = () => {
               name="mobile"
               value={user.mobile}
               onChange={handleInputChange}
+              placeholder="e.g. 9800000000"
               className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-gray-700">{user.mobile}</p>
+            <p className="text-gray-700">{user.mobile || "Not provided"}</p>
           )}
         </div>
 
+        {/* Address */}
         <div>
           <label className="block text-sm text-gray-700 font-medium">
             Address
@@ -136,10 +149,11 @@ const UserProfile = () => {
               name="address"
               value={user.address}
               onChange={handleInputChange}
+              placeholder="Your city or street address"
               className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-gray-700">{user.address}</p>
+            <p className="text-gray-700">{user.address || "Not provided"}</p>
           )}
         </div>
       </div>
