@@ -85,6 +85,7 @@ const PlaceOrder = () => {
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="number"
             placeholder="Phone Number"
+            required
           />
         </div>
       </div>

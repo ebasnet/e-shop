@@ -17,10 +17,10 @@ const Cart = () => {
   const dispatch = useDispatch();
   const [cartData, setCartData] = useState([]);
 
-  useEffect(() => {
-    // Temporary log to check the length and structure of cartItems
-    console.log("Cart Items:", cartItems);
+  // Access the user's login status from the Redux store
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
+  useEffect(() => {
     const tempData = [];
     cartItems.forEach((item) => {
       if (item.quantity > 0) {
@@ -46,6 +46,14 @@ const Cart = () => {
     toast.error("Item removed from cart", { icon: "🗑️" });
   };
 
+  const handleProceedToCheckout = () => {
+    if (isLoggedIn) {
+      navigate("/placeorder"); // Navigate to PlaceOrder if logged in
+    } else {
+      navigate("/login"); // Navigate to Login if not logged in
+    }
+  };
+
   return (
     <div className="relative pt-5 sm:pt-14 min-h-[80vh] border-t pb-40">
       <div className="text-xl sm:text-2xl my-3">
@@ -61,9 +69,6 @@ const Cart = () => {
               (product) => product._id === item._id
             );
 
-            // Log to debug why only one item is showing
-            console.log("Product Data:", productData);
-
             if (!productData) return null; // Skip rendering if productData is not found
 
             return (
@@ -74,7 +79,7 @@ const Cart = () => {
                 <div className="flex items-start gap-6">
                   <img
                     className="w-16 sm:w-20"
-                    src={productData.image?.[0] || assets.defaultImage} // Fallback to a default image if missing
+                    src={productData.image?.[0] || assets.defaultImage}
                     alt={productData.name}
                   />
                   <div>
@@ -148,8 +153,8 @@ const Cart = () => {
           <CartTotal />
           <div className="w-full text-end">
             <button
-              onClick={() => navigate("/placeorder")}
-              className="text-white bg-black  text-sm my-8 px-8 py-3"
+              onClick={handleProceedToCheckout} // Use the new checkout handler
+              className="text-white bg-black text-sm my-8 px-8 py-3"
             >
               PROCEED TO CHECKOUT
             </button>
