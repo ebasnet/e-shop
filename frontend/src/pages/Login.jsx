@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PropagateLoader } from "react-spinners";
 import { useDispatch } from "react-redux";
-import { login, logout } from "../redux/authSlice"; // Assuming login and logout actions are set up in authSlice
+import { login } from "../redux/authSlice";
+import FormInput from "../components//FormInput";
+import FormNotification from "../components//FormNotification";
+import FormToggle from "../components//FormToggle";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [showNotification, setShowNotification] = useState(false);
-  const [notificationMessage, setNotificationMessage] = useState("");
-  const [notificationType, setNotificationType] = useState(""); // "success" or "error"
+  const [notification, setNotification] = useState({ message: "", type: "" });
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,7 +19,7 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const onSubmitHandler = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -27,22 +28,22 @@ const Login = () => {
         const existingUser = localStorage.getItem("user");
         if (existingUser) {
           setLoading(false);
-          setNotificationMessage("User already exists. Please log in.");
-          setNotificationType("error");
-          setShowNotification(true);
+          setNotification({
+            message: "User already exists. Please log in.",
+            type: "error",
+          });
           setCurrentState("Login");
           setForm({ name: "", email: "", password: "" });
-          return;
+        } else {
+          localStorage.setItem("user", JSON.stringify(form));
+          setLoading(false);
+          setNotification({
+            message: "Sign up successful! Please log in.",
+            type: "success",
+          });
+          setCurrentState("Login");
+          setForm({ name: "", email: "", password: "" });
         }
-
-        // Save new user to localStorage and set login state in Redux
-        localStorage.setItem("user", JSON.stringify(form));
-        setLoading(false);
-        setNotificationMessage("Sign up successful! Please log in.");
-        setNotificationType("success");
-        setShowNotification(true);
-        setCurrentState("Login");
-        setForm({ name: "", email: "", password: "" });
       } else {
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (
@@ -50,38 +51,38 @@ const Login = () => {
           storedUser.email === form.email &&
           storedUser.password === form.password
         ) {
-          // Set user as logged in in Redux
           localStorage.setItem("loggedInUser", JSON.stringify(storedUser));
-          dispatch(login(storedUser)); // Dispatch the login action
-
+          dispatch(login(storedUser));
           setLoading(false);
-          setNotificationMessage("Login successful!");
-          setNotificationType("success");
-          setShowNotification(true);
-          navigate("/profile"); // Navigate to the profile page
+          setNotification({
+            message: "Login successful!",
+            type: "success",
+          });
+          navigate("/profile");
         } else {
           setLoading(false);
-          setNotificationMessage("Invalid credentials. Please try again.");
-          setNotificationType("error");
-          setShowNotification(true);
+          setNotification({
+            message: "Invalid credentials. Please try again.",
+            type: "error",
+          });
         }
       }
     }, 1500);
   };
 
   useEffect(() => {
-    if (showNotification) {
-      const timer = setTimeout(() => {
-        setShowNotification(false);
-      }, 3000);
-
+    if (notification.message) {
+      const timer = setTimeout(
+        () => setNotification({ message: "", type: "" }),
+        3000
+      );
       return () => clearTimeout(timer);
     }
-  }, [showNotification]);
+  }, [notification]);
 
   return (
     <form
-      onSubmit={onSubmitHandler}
+      onSubmit={handleSubmit}
       className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800"
     >
       {loading && (
@@ -96,54 +97,37 @@ const Login = () => {
       </div>
 
       {currentState !== "Login" && (
-        <input
+        <FormInput
           type="text"
           name="name"
           value={form.name}
           onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-800"
           placeholder="Name"
           required
         />
       )}
 
-      <input
+      <FormInput
         type="email"
         name="email"
         value={form.email}
         onChange={handleChange}
-        className="w-full px-3 py-2 border border-gray-800"
         placeholder="Email"
         required
       />
-      <input
+      <FormInput
         type="password"
         name="password"
         value={form.password}
         onChange={handleChange}
-        className="w-full px-3 py-2 border border-gray-800"
         placeholder="Password"
         required
       />
 
-      <div className="w-full flex justify-between text-sm mt-[-8px]">
-        <p className="cursor-pointer">Forgot your password?</p>
-        {currentState === "Login" ? (
-          <p
-            onClick={() => setCurrentState("Sign Up")}
-            className="cursor-pointer"
-          >
-            Create Account
-          </p>
-        ) : (
-          <p
-            onClick={() => setCurrentState("Login")}
-            className="cursor-pointer"
-          >
-            Login Here
-          </p>
-        )}
-      </div>
+      <FormToggle
+        currentState={currentState}
+        setCurrentState={setCurrentState}
+      />
 
       <button
         type="submit"
@@ -161,14 +145,11 @@ const Login = () => {
         )}
       </button>
 
-      {showNotification && (
-        <div
-          className={`mt-4 p-3 rounded-md text-center ${
-            notificationType === "success" ? "bg-green-500" : "bg-red-500"
-          }`}
-        >
-          <p className="text-white">{notificationMessage}</p>
-        </div>
+      {notification.message && (
+        <FormNotification
+          message={notification.message}
+          type={notification.type}
+        />
       )}
     </form>
   );
