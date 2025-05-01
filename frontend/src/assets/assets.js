@@ -98,7 +98,7 @@ export const assets = {
 export const products = [
   {
     _id: "WMN-TOP-001",
-    name: "Women Round Neck Cotton Top",
+    name: "Women Printed Cotton Top",
     description:
       "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
     price: 1000,

@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Login from "./pages/Login";
 import UserProfile from "./pages/UserProfile";
 import Logout from "./pages/Logout";
+import TrackPackage from "./pages/TrackPackage";
 
 const App = () => {
   return (
@@ -45,8 +46,7 @@ const App = () => {
           <Route path="/orders" element={<Orders />} />
           <Route path="/success" element={<Success />} />
           <Route path="/profile" element={<UserProfile />} />
-
-          <Route path="/logout" element={<Logout />} />
+          <Route path="/track-package" element={<TrackPackage />} />
         </Routes>
         <Footer />
       </div>

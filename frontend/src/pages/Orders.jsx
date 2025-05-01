@@ -84,7 +84,11 @@ const Orders = () => {
                 >
                   Buy it again
                 </button>
-                <button className="border px-4 py-2 rounded hover:bg-gray-100">
+
+                <button
+                  className="border px-4 py-2 rounded hover:bg-gray-100"
+                  onClick={() => navigate("/track-package")}
+                >
                   Track package
                 </button>
               </div>

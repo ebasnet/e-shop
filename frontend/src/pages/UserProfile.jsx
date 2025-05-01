@@ -1,129 +1,163 @@
-import React, { useState } from "react";
-import { assets } from "../assets/assets"; // Optional: to add a placeholder image or logo for the profile
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState({
-    firstName: "Eliza",
-    lastName: "Basnet",
-    email: "eliza@gmail.com",
-    phoneNumber: "9812345678",
-    address: "Balkot,Bhaktapur",
-    profilePic: assets.default_profile_pic, // Placeholder profile picture
-  });
+  const [user, setUser] = useState(null);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      setUser(JSON.parse(loggedInUser));
+    } else {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUser({
-      ...user,
+    setUser((prevUser) => ({
+      ...prevUser,
       [name]: value,
-    });
+    }));
   };
 
+  const handleSaveChanges = () => {
+    localStorage.setItem("loggedInUser", JSON.stringify(user));
+    setIsEditing(false);
+    alert("Profile updated successfully!");
+  };
+
+  if (!user) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col items-center p-6 space-y-6 w-full sm:w-96 bg-white rounded-lg shadow-lg">
-      <div className="inline-flex items-center gap-2 mb-2 mt-10">
-        <p className="prata-regular text-3xl">User Profile</p>
-        <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
+    <div className="flex flex-col items-center p-10 max-w-lg mx-auto bg-white rounded-xl shadow-xl space-y-8">
+      <div className="flex items-center gap-3 mb-6 mt-6">
+        <p className="text-4xl font-semibold text-gray-900">User Profile</p>
+        <hr className="flex-grow border-none h-[2px] bg-gray-300" />
       </div>
 
-      <div className="flex flex-col items-center space-y-4">
-        {/* Profile Picture */}
-        {/* <img
-          src={user.profilePic}
-          alt="Profile"
-          className="w-24 h-24 rounded-full object-cover"
-        /> */}
-        {/* Edit Button */}
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md"
-        >
-          {isEditing ? "Save Changes" : "Edit Profile"}
-        </button>
-      </div>
+      <button
+        onClick={() => setIsEditing(!isEditing)}
+        className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-blue-700 focus:outline-none"
+      >
+        {isEditing ? "Cancel" : "Edit Profile"}
+      </button>
 
-      {/* Profile Details */}
-      <div className="space-y-4 w-full">
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-600">
-            First Name
+      <div className="w-full space-y-6">
+        <div>
+          <label className="block text-sm text-gray-700 font-medium">
+            Name
           </label>
           {isEditing ? (
             <input
               type="text"
-              name="firstName"
-              value={user.firstName}
+              name="name"
+              value={user.name}
               onChange={handleInputChange}
-              className="border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-gray-400"
+              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-lg">{user.firstName}</p>
+            <p className="text-gray-700">{user.name}</p>
           )}
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-600">Last Name</label>
-          {isEditing ? (
-            <input
-              type="text"
-              name="lastName"
-              value={user.lastName}
-              onChange={handleInputChange}
-              className="border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-gray-400"
-            />
-          ) : (
-            <p className="text-lg">{user.lastName}</p>
-          )}
-        </div>
-
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-600">Email</label>
+        <div>
+          <label className="block text-sm text-gray-700 font-medium">
+            Email
+          </label>
           {isEditing ? (
             <input
               type="email"
               name="email"
               value={user.email}
               onChange={handleInputChange}
-              className="border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-gray-400"
+              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-lg">{user.email}</p>
+            <p className="text-gray-700">{user.email}</p>
           )}
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-600">
-            Phone Number
+        <div>
+          <label className="block text-sm text-gray-700 font-medium">
+            Password
+          </label>
+          {isEditing ? (
+            <div className="relative">
+              <input
+                type={passwordVisible ? "text" : "password"}
+                name="password"
+                value={user.password}
+                onChange={handleInputChange}
+                className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={() => setPasswordVisible(!passwordVisible)}
+                className="absolute right-4 top-3 text-gray-500 focus:outline-none"
+              >
+                👁️
+              </button>
+            </div>
+          ) : (
+            <p className="text-gray-700">••••••••</p>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-700 font-medium">
+            Mobile Number
           </label>
           {isEditing ? (
             <input
-              type="tel"
-              name="phoneNumber"
-              value={user.phoneNumber}
+              type="text"
+              name="mobile"
+              value={user.mobile}
               onChange={handleInputChange}
-              className="border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-gray-400"
+              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-lg">{user.phoneNumber}</p>
+            <p className="text-gray-700">{user.mobile}</p>
           )}
         </div>
 
-        <div className="flex flex-col space-y-2">
-          <label className="text-sm font-medium text-gray-600">Address</label>
+        <div>
+          <label className="block text-sm text-gray-700 font-medium">
+            Address
+          </label>
           {isEditing ? (
             <input
               type="text"
               name="address"
               value={user.address}
               onChange={handleInputChange}
-              className="border border-gray-300 rounded py-2 px-3 focus:outline-none focus:border-gray-400"
+              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           ) : (
-            <p className="text-lg">{user.address}</p>
+            <p className="text-gray-700">{user.address}</p>
           )}
         </div>
       </div>
+
+      {isEditing && (
+        <button
+          onClick={handleSaveChanges}
+          className="w-full sm:w-auto bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-green-700 focus:outline-none"
+        >
+          Save Changes
+        </button>
+      )}
+
+      <Link to="/orders">
+        <button className="w-full sm:w-auto bg-gray-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-gray-700 focus:outline-none mt-6">
+          View Orders
+        </button>
+      </Link>
     </div>
   );
 };

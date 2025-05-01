@@ -4,6 +4,7 @@ import storage from "redux-persist/lib/storage";
 import cartReducer from "./cartSlice";
 import shopReducer from "./shopSlice";
 import orderReducer from "./orderSlice";
+import authReducer from "./authSlice";
 
 // Persist configuration for the cart reducer
 const cartPersistConfig = {
@@ -30,6 +31,7 @@ export const store = configureStore({
     cart: persistedCartReducer,
     shop: shopReducer,
     orders: persistedOrdersReducer,
+    auth: authReducer,
   },
 });
 
