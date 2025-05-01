@@ -8,6 +8,7 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Get logged in user from localStorage
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
       const parsedUser = JSON.parse(loggedInUser);
@@ -34,7 +35,15 @@ const UserProfile = () => {
   };
 
   const handleSaveChanges = () => {
+    // Save the updated user info to localStorage
     localStorage.setItem("loggedInUser", JSON.stringify(user));
+
+    // Optionally, you can also update the "users" list if you're saving users in an array.
+    // Example if you have a users array in localStorage:
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const updatedUsers = users.map((u) => (u.email === user.email ? user : u));
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+
     setIsEditing(false);
     alert("Profile updated successfully!");
   };
