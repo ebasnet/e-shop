@@ -73,6 +73,8 @@ import contact_img from "./contact_img.png";
 import khalti_logo from "./khalti_logo.jpg";
 import esewa_logo from "./esewa_logo.png";
 import cross_icon from "./cross_icon.png";
+import qr_place from "./qr_place.png";
+import khalti from "./khalti.png";
 
 export const assets = {
   logo,
@@ -93,6 +95,8 @@ export const assets = {
   khalti_logo,
   esewa_logo,
   cross_icon,
+  qr_place,
+  khalti,
 };
 
 export const products = [

@@ -21,6 +21,10 @@ import Login from "./pages/Login";
 import UserProfile from "./pages/UserProfile";
 import Logout from "./pages/Logout";
 import TrackPackage from "./pages/TrackPackage";
+import Admin from "./pages/Admin/Admin";
+import AdminLogin from "./pages/Admin/AdminLogin";
+import AdminOrders from "./pages/Admin/AdminOrders";
+import AddItem from "./pages/Admin/AddItem";
 
 const App = () => {
   return (
@@ -47,6 +51,10 @@ const App = () => {
           <Route path="/success" element={<Success />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/track-package" element={<TrackPackage />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/adminlogin" element={<AdminLogin />} />
+          <Route path="/admin/orders" element={<AdminOrders />} />
+          <Route path="/admin/additem" element={<AddItem />} />
         </Routes>
         <Footer />
       </div>

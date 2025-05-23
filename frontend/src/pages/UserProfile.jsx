@@ -8,18 +8,14 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Get logged in user from localStorage
     const loggedInUser = localStorage.getItem("loggedInUser");
     if (loggedInUser) {
       const parsedUser = JSON.parse(loggedInUser);
-
-      // Set defaults if fields are missing
       const userWithDefaults = {
         ...parsedUser,
         mobile: parsedUser.mobile || "",
         address: parsedUser.address || "",
       };
-
       setUser(userWithDefaults);
     } else {
       navigate("/login");
@@ -35,152 +31,183 @@ const UserProfile = () => {
   };
 
   const handleSaveChanges = () => {
-    // Save the updated user info to localStorage
     localStorage.setItem("loggedInUser", JSON.stringify(user));
-
-    // Optionally, you can also update the "users" list if you're saving users in an array.
-    // Example if you have a users array in localStorage:
     const users = JSON.parse(localStorage.getItem("users")) || [];
     const updatedUsers = users.map((u) => (u.email === user.email ? user : u));
     localStorage.setItem("users", JSON.stringify(updatedUsers));
-
     setIsEditing(false);
-    alert("Profile updated successfully!");
+    alert("🎉 Profile updated successfully!");
+  };
+
+  const getInitials = (name) => {
+    return name
+      ?.split(" ")
+      .map((n) => n[0].toUpperCase())
+      .join("");
   };
 
   if (!user) return null;
 
   return (
-    <div className="flex flex-col items-center p-10 max-w-lg mx-auto bg-white rounded-xl shadow-xl space-y-8">
-      <div className="flex items-center gap-3 mb-6 mt-6">
-        <p className="text-4xl font-semibold text-gray-900">User Profile</p>
-        <hr className="flex-grow border-none h-[2px] bg-gray-300" />
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#e0eafc] to-[#cfdef3] flex items-center justify-center px-4 animate-fade-in-up">
+      <div className="backdrop-blur-lg bg-white/20 border border-white/30 shadow-2xl rounded-3xl p-8 md:p-12 w-full max-w-3xl transition-all duration-500 animate-fade-in-slow">
+        <div className="flex flex-col md:flex-row items-center gap-6">
+          {/* Avatar with animated gradient ring */}
+          <div className="relative animate-pulse-slow">
+            <div className="w-28 h-28 bg-gradient-to-r from-pink-400 via-purple-500 to-indigo-500 p-1 rounded-full shadow-lg animate-spin-slower">
+              <div className="bg-indigo-600 w-full h-full rounded-full flex items-center justify-center text-white text-4xl font-bold tracking-widest">
+                {getInitials(user.name)}
+              </div>
+            </div>
+          </div>
 
-      <button
-        onClick={() => setIsEditing(!isEditing)}
-        className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-blue-700 focus:outline-none"
-      >
-        {isEditing ? "Cancel" : "Edit Profile"}
-      </button>
-
-      <div className="w-full space-y-6">
-        {/* Name */}
-        <div>
-          <label className="block text-sm text-gray-700 font-medium">
-            Name
-          </label>
-          {isEditing ? (
-            <input
-              type="text"
-              name="name"
-              value={user.name}
-              onChange={handleInputChange}
-              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          ) : (
-            <p className="text-gray-700">{user.name}</p>
-          )}
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm text-gray-700 font-medium">
-            Email
-          </label>
-          {isEditing ? (
-            <input
-              type="email"
-              name="email"
-              value={user.email}
-              onChange={handleInputChange}
-              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          ) : (
-            <p className="text-gray-700">{user.email}</p>
-          )}
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm text-gray-700 font-medium">
-            Password
-          </label>
-          {isEditing ? (
-            <div className="relative">
-              <input
-                type={passwordVisible ? "text" : "password"}
-                name="password"
-                value={user.password}
-                onChange={handleInputChange}
-                className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-              />
+          <div className="w-full">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight drop-shadow-lg animate-fade-in">
+                  Welcome,{" "}
+                  <span className="text-indigo-700">
+                    {user.name?.split(" ")[0]}
+                  </span>{" "}
+                  👋
+                </h1>
+                <p className="text-gray-600 text-sm font-medium animate-fade-in">
+                  Glad to see you back!
+                </p>
+              </div>
               <button
-                type="button"
-                onClick={() => setPasswordVisible(!passwordVisible)}
-                className="absolute right-4 top-3 text-gray-500 focus:outline-none"
+                onClick={() => setIsEditing(!isEditing)}
+                className={`px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition-all duration-300 hover:scale-110 hover:shadow-2xl ${
+                  isEditing
+                    ? "bg-rose-500 hover:bg-rose-600"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                }`}
               >
-                👁️
+                {isEditing ? "Cancel" : "Edit"}
               </button>
             </div>
-          ) : (
-            <p className="text-gray-700">••••••••</p>
-          )}
-        </div>
 
-        {/* Mobile Number */}
-        <div>
-          <label className="block text-sm text-gray-700 font-medium">
-            Mobile Number
-          </label>
-          {isEditing ? (
-            <input
-              type="text"
-              name="mobile"
-              value={user.mobile}
-              onChange={handleInputChange}
-              placeholder="e.g. 9800000000"
-              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          ) : (
-            <p className="text-gray-700">{user.mobile || "Not provided"}</p>
-          )}
-        </div>
+            <div className="grid gap-5">
+              {["name", "email", "mobile", "address"].map((field, index) => (
+                <div
+                  key={field}
+                  className={`animate-fade-in delay-[${index * 100}ms]`}
+                >
+                  <label className="block mb-1 text-sm text-gray-600 capitalize">
+                    {field}
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type={field === "email" ? "email" : "text"}
+                      name={field}
+                      value={user[field]}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-xl border border-gray-300 bg-white/60 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 animate-glow-on-focus"
+                    />
+                  ) : (
+                    <p className="text-gray-800 font-medium">
+                      {user[field] || "Not provided"}
+                    </p>
+                  )}
+                </div>
+              ))}
 
-        {/* Address */}
-        <div>
-          <label className="block text-sm text-gray-700 font-medium">
-            Address
-          </label>
-          {isEditing ? (
-            <input
-              type="text"
-              name="address"
-              value={user.address}
-              onChange={handleInputChange}
-              placeholder="Your city or street address"
-              className="border border-gray-300 p-4 w-full rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            />
-          ) : (
-            <p className="text-gray-700">{user.address || "Not provided"}</p>
-          )}
+              {/* Password Field */}
+              <div className="animate-fade-in delay-500">
+                <label className="block mb-1 text-sm text-gray-600">
+                  Password
+                </label>
+                {isEditing ? (
+                  <div className="relative">
+                    <input
+                      type={passwordVisible ? "text" : "password"}
+                      name="password"
+                      value={user.password}
+                      onChange={handleInputChange}
+                      className="w-full p-3 rounded-xl border border-gray-300 bg-white/60 backdrop-blur-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setPasswordVisible(!passwordVisible)}
+                      className="absolute right-4 top-2.5 text-xl text-gray-500"
+                    >
+                      {passwordVisible ? "🙈" : "👁️"}
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-800">••••••••</p>
+                )}
+              </div>
+            </div>
+
+            {isEditing && (
+              <div className="text-center mt-8 animate-fade-in">
+                <button
+                  onClick={handleSaveChanges}
+                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-full shadow-lg transition-all duration-300 hover:scale-105 text-lg font-semibold"
+                >
+                  ✅ Save Profile
+                </button>
+              </div>
+            )}
+
+            <div className="text-center mt-8 animate-fade-in delay-700">
+              <Link to="/orders">
+                <button className="px-6 py-3 bg-black text-white rounded-full hover:bg-gray-800 transition-all duration-300 shadow-md hover:scale-105">
+                  🛒 View Orders
+                </button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {isEditing && (
-        <button
-          onClick={handleSaveChanges}
-          className="w-full sm:w-auto bg-green-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-green-700 focus:outline-none"
-        >
-          Save Changes
-        </button>
-      )}
+      {/* Custom Animations */}
+      <style>
+        {`
+          @keyframes fade-in-up {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
 
-      <Link to="/orders">
-        <button className="w-full sm:w-auto bg-gray-600 text-white px-6 py-3 rounded-lg text-lg transition duration-300 hover:bg-gray-700 focus:outline-none mt-6">
-          View Orders
-        </button>
-      </Link>
+          .animate-fade-in-up {
+            animation: fade-in-up 0.7s ease-out both;
+          }
+
+          .animate-spin-slower {
+            animation: spin 12s linear infinite;
+          }
+
+          .animate-pulse-slow {
+            animation: pulse 3s infinite;
+          }
+
+          .animate-glow-on-focus:focus {
+            box-shadow: 0 0 10px #6366f1;
+          }
+
+          .animate-fade-in {
+            animation: fade-in 0.6s ease both;
+          }
+
+          @keyframes fade-in {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </div>
   );
 };
