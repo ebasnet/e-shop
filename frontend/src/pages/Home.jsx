@@ -4,6 +4,7 @@ import LatestCollection from "../components/LatestCollection";
 import BestSellers from "../components/BestSellers";
 import Policy from "../components/Policy";
 import NewsLetter from "../components/NewsLetter";
+import Sample from "./sample";
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
       <Hero />
       <LatestCollection />
       <BestSellers />
+      <Sample />
       <Policy />
       <NewsLetter />
     </div>

@@ -12,6 +12,7 @@ export default function AddItem() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSizeChange = (size) => {
     if (selectedSizes.includes(size)) {
@@ -28,15 +29,37 @@ export default function AddItem() {
     }
   };
 
-  const handleSave = () => {
-    console.log({
-      name,
-      category,
-      sizes: selectedSizes,
-      description,
-      photo,
-    });
-    alert("Item data logged to console. Extend to backend submission.");
+  const handleSave = async () => {
+    if (!name || selectedSizes.length === 0 || !description) {
+      alert("Please fill all required fields and select at least one size.");
+      return;
+    }
+    setLoading(true);
+
+    // Prepare form data for photo upload
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("category", category);
+    formData.append("sizes", JSON.stringify(selectedSizes)); // send as JSON string
+    formData.append("description", description);
+    if (photo) formData.append("photo", photo);
+
+    try {
+      const res = await fetch("/api/items", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error("Failed to add item.");
+
+      alert("Item added successfully!");
+      handleCancel();
+      navigate("/items"); // redirect to items list or admin page
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -49,7 +72,6 @@ export default function AddItem() {
 
   return (
     <div className="max-w-lg mx-auto mt-16 p-8 bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-lg border border-gray-200 font-sans">
-      {/* Back Button */}
       <button
         onClick={() => navigate("/admin")}
         className="mb-6 inline-flex items-center text-indigo-600 hover:text-indigo-800 font-semibold transition"
@@ -154,15 +176,17 @@ export default function AddItem() {
       <div className="flex justify-end gap-6 mt-10">
         <button
           onClick={handleCancel}
+          disabled={loading}
           className="px-6 py-3 bg-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-400 transition"
         >
           Cancel
         </button>
         <button
           onClick={handleSave}
+          disabled={loading}
           className="px-6 py-3 bg-indigo-600 rounded-xl font-semibold text-white hover:bg-indigo-700 transition shadow-lg"
         >
-          Save
+          {loading ? "Saving..." : "Save"}
         </button>
       </div>
     </div>

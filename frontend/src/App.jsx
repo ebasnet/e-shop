@@ -25,6 +25,8 @@ import Admin from "./pages/Admin/Admin";
 import AdminLogin from "./pages/Admin/AdminLogin";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AddItem from "./pages/Admin/AddItem";
+import Items from "./pages/Admin/Items";
+import SampleDetail from "./pages/SampleDetail";
 
 const App = () => {
   return (
@@ -55,6 +57,9 @@ const App = () => {
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/additem" element={<AddItem />} />
+          <Route path="/admin/items" element={<Items />} />
+
+          <Route path="/sample/:id" element={<SampleDetail />} />
         </Routes>
         <Footer />
       </div>

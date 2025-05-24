@@ -14,6 +14,19 @@ const PlaceOrder = () => {
   const [khaltiCheckout, setKhaltiCheckout] = useState(null);
   const [showEsewaQR, setShowEsewaQR] = useState(false);
 
+  // Form state for validation
+  const [form, setForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    street: "",
+    city: "",
+    province: "",
+    zipcode: "",
+    phone: "",
+  });
+  const [error, setError] = useState("");
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
@@ -30,6 +43,7 @@ const PlaceOrder = () => {
     } else {
       initKhaltiCheckout();
     }
+    // eslint-disable-next-line
   }, []);
 
   const initKhaltiCheckout = () => {
@@ -40,17 +54,14 @@ const PlaceOrder = () => {
       productUrl: window.location.href,
       eventHandler: {
         onSuccess: (payload) => {
-          console.log("Khalti payment success:", payload);
           setIsPaid(true);
           alert("Payment successful via Khalti!");
         },
-        onError: (error) => {
-          console.error("Khalti payment error:", error);
+        onError: () => {
           setIsPaid(false);
           alert("Payment failed or cancelled.");
         },
         onClose: () => {
-          console.log("Khalti payment widget closed.");
           setIsPaid(false);
         },
       },
@@ -66,7 +77,28 @@ const PlaceOrder = () => {
     setKhaltiCheckout(checkout);
   };
 
+  // Email validation: must be valid and end with @gmail.com
+  const isValidGmail = (email) => {
+    // Basic email regex and must end with @gmail.com
+    const regex = /^[^\s@]+@gmail\.com$/i;
+    return regex.test(email);
+  };
+
   const handlePlaceOrder = () => {
+    // Check for empty fields
+    for (const key in form) {
+      if (!form[key]) {
+        setError("Please fill out all fields.");
+        return;
+      }
+    }
+    // Email format check
+    if (!isValidGmail(form.email)) {
+      setError("Please enter a valid email ending with @gmail.com.");
+      return;
+    }
+    setError("");
+
     if (cartItems.length === 0) return;
 
     if (method !== "cod" && !isPaid) {
@@ -82,6 +114,7 @@ const PlaceOrder = () => {
       })),
       placedAt: new Date().toLocaleString(),
       paymentMethod: method,
+      deliveryInfo: { ...form },
     };
 
     dispatch(placeOrder(orderDetails));
@@ -117,12 +150,16 @@ const PlaceOrder = () => {
             type="text"
             placeholder="First Name"
             required
+            value={form.firstName}
+            onChange={(e) => setForm({ ...form, firstName: e.target.value })}
           />
           <input
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="Last Name"
             required
+            value={form.lastName}
+            onChange={(e) => setForm({ ...form, lastName: e.target.value })}
           />
         </div>
         <input
@@ -130,12 +167,16 @@ const PlaceOrder = () => {
           type="email"
           placeholder="Email Address"
           required
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
         />
         <input
           className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
           type="text"
           placeholder="Street"
           required
+          value={form.street}
+          onChange={(e) => setForm({ ...form, street: e.target.value })}
         />
         <div className="flex gap-3">
           <input
@@ -143,12 +184,16 @@ const PlaceOrder = () => {
             type="text"
             placeholder="City"
             required
+            value={form.city}
+            onChange={(e) => setForm({ ...form, city: e.target.value })}
           />
           <input
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="text"
             placeholder="Province"
             required
+            value={form.province}
+            onChange={(e) => setForm({ ...form, province: e.target.value })}
           />
         </div>
         <div className="flex gap-3">
@@ -157,14 +202,19 @@ const PlaceOrder = () => {
             type="number"
             placeholder="Zipcode"
             required
+            value={form.zipcode}
+            onChange={(e) => setForm({ ...form, zipcode: e.target.value })}
           />
           <input
             className="border border-gray-300 rounded py-1.5 px-3.5 w-full focus:outline-none focus:border-gray-400"
             type="number"
             placeholder="Phone Number"
             required
+            value={form.phone}
+            onChange={(e) => setForm({ ...form, phone: e.target.value })}
           />
         </div>
+        {error && <div className="text-red-500 mb-4 text-right">{error}</div>}
       </div>
 
       {/* right side */}

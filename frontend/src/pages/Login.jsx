@@ -188,7 +188,7 @@ const Login = () => {
             <PropagateLoader color="#36d7b7" size={15} />
           </div>
         ) : currentState === "Login" ? (
-          "Sign In"
+          "Log In"
         ) : (
           "Sign Up"
         )}

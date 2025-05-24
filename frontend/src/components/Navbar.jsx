@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setShowSearch } from "../redux/shopSlice";
 import LogoutButton from "../components/LogoutButton";
@@ -11,6 +11,7 @@ const Navbar = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // 🆕 get current path
 
   const totalItems = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -41,30 +42,34 @@ const Navbar = () => {
         <ul className="hidden sm:flex gap-5 text-sm text-gray-700">
           <NavLink to="/" className={navLinkClass}>
             <p>HOME</p>
-            {window.location.pathname === "/" && activeUnderline}
+            {location.pathname === "/" && activeUnderline}
           </NavLink>
           <NavLink to="/collection" className={navLinkClass}>
             <p>COLLECTION</p>
-            {window.location.pathname === "/collection" && activeUnderline}
+            {location.pathname === "/collection" && activeUnderline}
           </NavLink>
           <NavLink to="/about" className={navLinkClass}>
             <p>ABOUT</p>
-            {window.location.pathname === "/about" && activeUnderline}
+            {location.pathname === "/about" && activeUnderline}
           </NavLink>
           <NavLink to="/contact" className={navLinkClass}>
             <p>CONTACT</p>
-            {window.location.pathname === "/contact" && activeUnderline}
+            {location.pathname === "/contact" && activeUnderline}
           </NavLink>
-          <NavLink
-            to="/adminlogin"
-            className={({ isActive }) =>
-              `flex flex-col items-center gap-1 text-white bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-1 rounded-[70px_30px_70px_30px] shadow-md hover:brightness-110 transition-all duration-200 ${
-                isActive ? "ring-2 ring-offset-2 ring-purple-500" : ""
-              }`
-            }
-          >
-            <p>ADMIN</p>
-          </NavLink>
+
+          {/* Hide ADMIN if on /login */}
+          {location.pathname !== "/login" && (
+            <NavLink
+              to="/adminlogin"
+              className={({ isActive }) =>
+                `flex flex-col items-center gap-1 text-white bg-gradient-to-r from-indigo-500 to-purple-500 px-4 py-1 rounded-[70px_30px_70px_30px] shadow-md hover:brightness-110 transition-all duration-200 ${
+                  isActive ? "ring-2 ring-offset-2 ring-purple-500" : ""
+                }`
+              }
+            >
+              <p>ADMIN</p>
+            </NavLink>
+          )}
         </ul>
 
         {/* Right Icons */}
@@ -131,7 +136,7 @@ const Navbar = () => {
               <img
                 className="h-4 rotate-180"
                 src={assets.dropdown_icon}
-                alt=""
+                alt="Back"
               />
               <p>Back</p>
             </div>
@@ -163,13 +168,17 @@ const Navbar = () => {
             >
               CONTACT
             </NavLink>
-            <NavLink
-              onClick={() => setVisible(false)}
-              className="py-4 pl-6 border bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-[70px_30px_70px_30px] mx-4 mt-4 text-center shadow-md"
-              to="/adminlogin"
-            >
-              ADMIN
-            </NavLink>
+
+            {/* Hide ADMIN on /login in Mobile too */}
+            {location.pathname !== "/login" && (
+              <NavLink
+                onClick={() => setVisible(false)}
+                className="py-4 pl-6 border bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-[70px_30px_70px_30px] mx-4 mt-4 text-center shadow-md"
+                to="/adminlogin"
+              >
+                ADMIN
+              </NavLink>
+            )}
           </div>
         </div>
       </div>

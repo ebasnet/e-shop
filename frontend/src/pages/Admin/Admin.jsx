@@ -99,6 +99,12 @@ export default function Admin() {
               </button>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={() => navigate("/admin/items")}
+              >
+                Items
+              </button>
+              <button
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                 onClick={() => navigate("/admin/additem")}
               >
                 Add Item
@@ -191,43 +197,6 @@ export default function Admin() {
             />
           </AreaChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Orders Table */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
-        <table className="w-full table-auto border-collapse border border-gray-300">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="border px-4 py-2 text-left">Order ID</th>
-              <th className="border px-4 py-2 text-left">Customer</th>
-              <th className="border px-4 py-2 text-left">Date</th>
-              <th className="border px-4 py-2 text-left">Amount</th>
-              <th className="border px-4 py-2 text-left">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {dummyOrders.map((order) => (
-              <tr key={order.id}>
-                <td className="border px-4 py-2">{order.id}</td>
-                <td className="border px-4 py-2">{order.customer}</td>
-                <td className="border px-4 py-2">{order.date}</td>
-                <td className="border px-4 py-2">Rs. {order.amount}</td>
-                <td
-                  className={`border px-4 py-2 ${
-                    order.status === "Delivered"
-                      ? "text-green-600"
-                      : order.status === "Pending"
-                      ? "text-yellow-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {order.status}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );
