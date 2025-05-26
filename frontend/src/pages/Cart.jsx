@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
   removeFromCart,
@@ -9,34 +9,21 @@ import Title from "../components/Title";
 import { products, assets } from "../assets/assets";
 import { toast } from "react-toastify";
 import CartTotal from "../components/CartTotal";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
-  const [cartData, setCartData] = useState([]);
 
-  // Access the user's login status from the Redux store
   const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
   useEffect(() => {
-    const tempData = [];
-    cartItems.forEach((item) => {
-      if (item.quantity > 0) {
-        tempData.push({
-          _id: item.id,
-          size: item.size,
-          quantity: item.quantity,
-        });
-      }
-    });
-    setCartData(tempData);
     dispatch(calculateTotals());
   }, [cartItems, dispatch]);
 
   const handleQuantityChange = (id, size, newQuantity) => {
-    if (newQuantity <= 0) return;
+    if (newQuantity <= 0 || isNaN(newQuantity)) return;
     dispatch(updateQuantity({ id, size, quantity: newQuantity }));
     toast.info("Quantity updated", { icon: "🔁" });
   };
@@ -48,11 +35,13 @@ const Cart = () => {
 
   const handleProceedToCheckout = () => {
     if (isLoggedIn) {
-      navigate("/placeorder"); // Navigate to PlaceOrder if logged in
+      navigate("/placeorder");
     } else {
-      navigate("/login"); // Navigate to Login if not logged in
+      navigate("/login");
     }
   };
+
+  const filteredCartItems = cartItems.filter((item) => item.quantity > 0);
 
   return (
     <div className="relative pt-5 sm:pt-14 min-h-[80vh] border-t pb-40">
@@ -61,19 +50,19 @@ const Cart = () => {
       </div>
 
       <div className="flex flex-col gap-6">
-        {cartData.length === 0 ? (
+        {filteredCartItems.length === 0 ? (
           <p>No items in the cart.</p>
         ) : (
-          cartData.map((item, index) => {
+          filteredCartItems.map((item) => {
             const productData = products.find(
-              (product) => product._id === item._id
+              (product) => product._id === item.id || product._id === item._id
             );
 
-            if (!productData) return null; // Skip rendering if productData is not found
+            if (!productData) return null;
 
             return (
               <div
-                key={index}
+                key={`${item._id || item.id}-${item.size}`}
                 className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_1.2fr_0.5fr] items-center gap-4"
               >
                 <div className="flex items-start gap-6">
@@ -97,9 +86,10 @@ const Cart = () => {
 
                 <div className="flex items-center gap-4">
                   <button
+                    aria-label="Decrease quantity"
                     onClick={() =>
                       handleQuantityChange(
-                        item._id,
+                        item._id || item.id,
                         item.size,
                         item.quantity - 1
                       )
@@ -113,18 +103,22 @@ const Cart = () => {
                     type="number"
                     min={1}
                     value={item.quantity}
-                    onChange={(e) =>
-                      handleQuantityChange(
-                        item._id,
-                        item.size,
-                        parseInt(e.target.value)
-                      )
-                    }
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value);
+                      if (!isNaN(val)) {
+                        handleQuantityChange(
+                          item._id || item.id,
+                          item.size,
+                          val
+                        );
+                      }
+                    }}
                   />
                   <button
+                    aria-label="Increase quantity"
                     onClick={() =>
                       handleQuantityChange(
-                        item._id,
+                        item._id || item.id,
                         item.size,
                         item.quantity + 1
                       )
@@ -136,8 +130,11 @@ const Cart = () => {
                 </div>
 
                 <button
-                  onClick={() => handleRemoveFromCart(item._id, item.size)}
+                  onClick={() =>
+                    handleRemoveFromCart(item._id || item.id, item.size)
+                  }
                   className="w-4 sm:w-5 cursor-pointer"
+                  aria-label="Remove item from cart"
                 >
                   <img className="w-full" src={assets.bin_icon} alt="remove" />
                 </button>
@@ -147,13 +144,12 @@ const Cart = () => {
         )}
       </div>
 
-      {/* Bottom Left Cart Total */}
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
           <CartTotal />
           <div className="w-full text-end">
             <button
-              onClick={handleProceedToCheckout} // Use the new checkout handler
+              onClick={handleProceedToCheckout}
               className="text-white bg-black text-sm my-8 px-8 py-3"
             >
               PROCEED TO CHECKOUT

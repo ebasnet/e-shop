@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, Loader2 } from "lucide-react";
+import Title from "../../components/Title";
 
 export default function Items() {
   const [products, setProducts] = useState([]);
@@ -92,9 +93,7 @@ export default function Items() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10">
-      <h1 className="text-4xl font-bold text-indigo-700 mb-10 text-center">
-        Products Dashboard
-      </h1>
+      <Title text1={"PRODUCTS"} text2={"DASHBOARD"} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Add Product Form */}

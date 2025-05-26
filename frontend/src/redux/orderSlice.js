@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  orders: [], // Ensure the state has the 'orders' key to store the array of orders
+  orders: [],
 };
 
 const orderSlice = createSlice({
@@ -9,11 +9,14 @@ const orderSlice = createSlice({
   initialState,
   reducers: {
     placeOrder: (state, action) => {
-      state.orders.push(action.payload); // Push the new order into the 'orders' array
+      state.orders.push(action.payload);
+    },
+    clearOrders: (state) => {
+      state.orders = []; // Reset orders array
     },
   },
 });
 
-export const { placeOrder } = orderSlice.actions;
+export const { placeOrder, clearOrders } = orderSlice.actions;
 
 export default orderSlice.reducer;
