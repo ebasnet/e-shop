@@ -9,5 +9,8 @@
     "framer-motion": "^12.12.2",
     "lucide-react": "^0.511.0",
     "react-hook-form": "^7.56.4"
+  },
+  "devDependencies": {
+    "vite": "^6.3.5"
   }
 }
