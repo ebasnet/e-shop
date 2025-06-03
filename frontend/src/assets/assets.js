@@ -75,6 +75,7 @@ import esewa_logo from "./esewa_logo.png";
 import cross_icon from "./cross_icon.png";
 import qr_place from "./qr_place.png";
 import khalti from "./khalti.png";
+import login from "./login.png";
 
 export const assets = {
   logo,
@@ -97,6 +98,7 @@ export const assets = {
   cross_icon,
   qr_place,
   khalti,
+  login,
 };
 
 export const products = [

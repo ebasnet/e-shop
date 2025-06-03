@@ -2,16 +2,28 @@ import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setShowSearch } from "../redux/shopSlice";
-import LogoutButton from "../components/LogoutButton";
+import { logout } from "../redux/authSlice"; // adjust path if needed
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false);
-  const showSearch = useSelector((state) => state.shop.showSearch);
+  const [showSearchBar, setShowSearchBar] = useState(false);
+
+  // Get user and cartItems from Redux store
+  const user = useSelector((state) => state.auth.user);
   const cartItems = useSelector((state) => state.cart.cartItems);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation(); // 🆕 get current path
+  const location = useLocation();
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/");
+  };
 
   const totalItems = cartItems.reduce(
     (total, item) => total + item.quantity,
@@ -57,7 +69,6 @@ const Navbar = () => {
             {location.pathname === "/contact" && activeUnderline}
           </NavLink>
 
-          {/* Hide ADMIN if on /login */}
           {location.pathname !== "/login" && (
             <NavLink
               to="/adminlogin"
@@ -73,37 +84,65 @@ const Navbar = () => {
         </ul>
 
         {/* Right Icons */}
-        <div className="flex items-center gap-7">
-          <img
-            onClick={() => dispatch(setShowSearch(true))}
-            src={assets.search_icon}
-            className="w-5 cursor-pointer"
-            alt="Search"
-          />
-
-          {/* Profile Dropdown */}
-          <div className="relative group z-50">
-            <Link to="/login">
-              <img
-                src={assets.profile_icon}
-                className="w-5 cursor-pointer"
-                alt="Profile"
+        <div className="flex items-center gap-7 relative">
+          {/* Search Bar (to the left of icon) */}
+          <div className="relative">
+            {showSearchBar && (
+              <input
+                type="text"
+                placeholder="Search"
+                className="placeholder:text-xs absolute right-7 top-1/2 -translate-y-1/2 border px-2 py-1 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all duration-300 w-16 sm:w-48 bg-white z-50"
               />
-            </Link>
-            <div className="absolute hidden group-hover:block right-0 pt-4 z-50">
-              <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-white text-gray-700 rounded-md shadow-xl border border-gray-200">
-                <p
-                  onClick={() => navigate("/profile")}
-                  className="cursor-pointer hover:text-black"
-                >
-                  My Profile
-                </p>
-                <LogoutButton />
-              </div>
-            </div>
+            )}
+            <img
+              onClick={() => setShowSearchBar(!showSearchBar)}
+              src={assets.search_icon}
+              className="w-5 cursor-pointer relative z-10"
+              alt="Search"
+            />
           </div>
 
-          {/* Cart Icon */}
+          {/* Profile/Login */}
+          {user ? (
+            <div className="relative group z-50">
+              <img
+                src={assets.profile_icon}
+                className="w-10 cursor-pointer"
+                alt="Profile"
+              />
+              <div className="absolute hidden group-hover:block right-0 pt-4 z-50">
+                <div className="flex flex-col gap-2 w-36 py-3 px-5 bg-white text-gray-700 rounded-md shadow-xl border border-gray-200">
+                  <p
+                    onClick={() => navigate("/profile")}
+                    className="cursor-pointer hover:text-black"
+                  >
+                    My Profile
+                  </p>
+                  <p
+                    onClick={() => navigate("/orders")}
+                    className="cursor-pointer hover:text-black"
+                  >
+                    My Orders
+                  </p>
+                  <p
+                    onClick={handleLogout}
+                    className="cursor-pointer hover:text-black"
+                  >
+                    Logout
+                  </p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <img
+              className="w-12 rounded-3xl hover:brightness-110 hover:scale-110 cursor-pointer hover:shadow-lg"
+              src={assets.login}
+              onClick={handleLogin}
+              alt="Login"
+            />
+          )}
+
+          {/* Cart */}
           <Link to="/cart" className="relative">
             <img src={assets.cart_icon} className="w-5 min-w-5" alt="Cart" />
             {totalItems > 0 && (
@@ -169,7 +208,6 @@ const Navbar = () => {
               CONTACT
             </NavLink>
 
-            {/* Hide ADMIN on /login in Mobile too */}
             {location.pathname !== "/login" && (
               <NavLink
                 onClick={() => setVisible(false)}

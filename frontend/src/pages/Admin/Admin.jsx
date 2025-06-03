@@ -104,13 +104,13 @@ export default function Admin() {
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100"
                 onClick={() => navigate("/admin/items")}
               >
-                Items
+                Add Items
               </button>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                onClick={() => navigate("/admin/additem")}
+                onClick={() => navigate("e-shop/admin/adminitems")}
               >
-                Add Item
+                Items
               </button>
               <button
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100"

@@ -9,7 +9,7 @@ import Title from "../components/Title";
 import { products, assets } from "../assets/assets";
 import { toast } from "react-toastify";
 import CartTotal from "../components/CartTotal";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Cart = () => {
   const navigate = useNavigate();
@@ -51,7 +51,17 @@ const Cart = () => {
 
       <div className="flex flex-col gap-6">
         {filteredCartItems.length === 0 ? (
-          <p>No items in the cart.</p>
+          <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+            <p className="text-2xl font-semibold text-gray-700 mb-4">
+              No items in the cart.
+            </p>
+            <Link
+              to="/Collection"
+              className="inline-block bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition duration-200 shadow-md"
+            >
+              Continue Shopping!
+            </Link>
+          </div>
         ) : (
           filteredCartItems.map((item) => {
             const productData = products.find(

@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Collection from "./pages/Collection";
 import About from "./pages/About";
@@ -28,12 +28,14 @@ import AddItem from "./pages/Admin/AddItem";
 import Items from "./pages/Admin/Items";
 import SampleDetail from "./pages/SampleDetail";
 import AdminProfile from "./pages/Admin/AdminProfile";
+import AdminAllItems from "./pages/Admin/AdminAllItems";
 
 const App = () => {
+  const isAdmin = useLocation().pathname.includes("admin");
   return (
     <>
       <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] ">
-        <Navbar />
+        {isAdmin ? null : <Navbar />}
         <SearchBar />
         <ToastContainer
           position="top-right"
@@ -61,6 +63,7 @@ const App = () => {
           <Route path="/admin/items" element={<Items />} />
           <Route path="/admin/profile" element={<AdminProfile />} />
           <Route path="/sample/:id" element={<SampleDetail />} />
+          <Route path="/e-shop/admin/adminitems" element={<AdminAllItems />} />
         </Routes>
         <Footer />
       </div>

@@ -1,7 +1,8 @@
+// Login.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { PropagateLoader } from "react-spinners";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../redux/authSlice";
 import FormInput from "../components/FormInput";
 import FormNotification from "../components/FormNotification";
@@ -18,11 +19,25 @@ const Login = () => {
   });
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ message: "", type: "" });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("loggedInUser");
+    if (savedUser && !isLoggedIn) {
+      dispatch(login(JSON.parse(savedUser)));
+      navigate("/profile");
+    }
+  }, [dispatch, isLoggedIn, navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const resetForm = () => {
+    setForm({ name: "", email: "", password: "", mobile: "", address: "" });
   };
 
   const handleSubmit = (e) => {
@@ -30,75 +45,50 @@ const Login = () => {
     setLoading(true);
 
     setTimeout(() => {
-      if (currentState === "Sign Up") {
-        const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
+      const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-        // Check if the user already exists
+      if (currentState === "Sign Up") {
         const userExists = existingUsers.some(
           (user) => user.email === form.email
         );
-
         if (userExists) {
-          setLoading(false);
           setNotification({
             message: "User already exists. Please log in.",
             type: "error",
           });
           setCurrentState("Login");
-          setForm({
-            name: "",
-            email: "",
-            password: "",
-            mobile: "",
-            address: "",
-          });
+          resetForm();
         } else {
-          const newUser = {
-            name: form.name,
-            email: form.email,
-            password: form.password,
-            mobile: form.mobile,
-            address: form.address,
-          };
+          const newUser = { ...form };
           existingUsers.push(newUser);
           localStorage.setItem("users", JSON.stringify(existingUsers));
-          setLoading(false);
           setNotification({
             message: "Sign up successful! Please log in.",
             type: "success",
           });
           setCurrentState("Login");
-          setForm({
-            name: "",
-            email: "",
-            password: "",
-            mobile: "",
-            address: "",
-          });
+          resetForm();
         }
       } else {
-        const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-        const storedUser = existingUsers.find(
-          (user) => user.email === form.email && user.password === form.password
+        const user = existingUsers.find(
+          (u) => u.email === form.email && u.password === form.password
         );
 
-        if (storedUser) {
-          localStorage.setItem("loggedInUser", JSON.stringify(storedUser));
-          dispatch(login(storedUser));
-          setLoading(false);
-          setNotification({
-            message: "Login successful!",
-            type: "success",
-          });
+        if (user) {
+          localStorage.setItem("loggedInUser", JSON.stringify(user));
+          dispatch(login(user));
+          setNotification({ message: "Login successful!", type: "success" });
+          resetForm();
           navigate("/profile");
         } else {
-          setLoading(false);
           setNotification({
             message: "Invalid credentials. Please try again.",
             type: "error",
           });
         }
       }
+
+      setLoading(false);
     }, 1500);
   };
 
@@ -121,12 +111,10 @@ const Login = () => {
           <PropagateLoader color="#36d7b7" size={30} />
         </div>
       )}
-
       <div className="inline-flex items-center gap-2 mb-2 mt-10">
         <p className="prata-regular text-3xl">{currentState}</p>
         <hr className="border-none h-[1.5px] w-8 bg-gray-800" />
       </div>
-
       {currentState !== "Login" && (
         <>
           <FormInput
@@ -155,7 +143,6 @@ const Login = () => {
           />
         </>
       )}
-
       <FormInput
         type="email"
         name="email"
@@ -172,28 +159,23 @@ const Login = () => {
         placeholder="Password"
         required
       />
-
       <FormToggle
         currentState={currentState}
         setCurrentState={setCurrentState}
       />
-
       <button
         type="submit"
         className="bg-black text-white font-light py-2 px-8 mt-4"
         disabled={loading}
       >
         {loading ? (
-          <div className="flex justify-center">
-            <PropagateLoader color="#36d7b7" size={15} />
-          </div>
+          <PropagateLoader color="#36d7b7" size={15} />
         ) : currentState === "Login" ? (
           "Log In"
         ) : (
           "Sign Up"
         )}
       </button>
-
       {notification.message && (
         <FormNotification
           message={notification.message}
