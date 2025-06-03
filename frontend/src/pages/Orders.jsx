@@ -4,8 +4,6 @@ import Title from "../components/Title";
 import { assets } from "../assets/assets";
 import { useNavigate } from "react-router-dom";
 import { addToCart } from "../redux/cartSlice";
-import CartTotal from "../components/CartTotal";
-// Import the action
 
 const Orders = () => {
   const navigate = useNavigate();
@@ -14,14 +12,14 @@ const Orders = () => {
   const [orderData, setOrderData] = useState([]);
 
   useEffect(() => {
-    // Process orders and save to state
+    // Flatten orders to individual items with order info
     const tempData = [];
     orders.forEach((order) => {
       order.items.forEach((item) => {
         tempData.push({
           ...item,
           orderId: order.id,
-          placedAt: order.placedAt, // Add the order's placed date
+          placedAt: order.placedAt,
         });
       });
     });
@@ -29,9 +27,15 @@ const Orders = () => {
   }, [orders]);
 
   const handleReorder = (item) => {
-    const updatedItem = { ...item, quantity: 1 }; // Ensure the quantity is at least 1
-    dispatch(addToCart(updatedItem)); // Dispatch the addToCart action
+    const updatedItem = { ...item, quantity: 1 }; // Reset quantity to 1 on reorder
+    dispatch(addToCart(updatedItem));
   };
+
+  // Calculate total amount for all ordered items
+  const totalAmount = orderData.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return (
     <div className="relative pt-5 sm:pt-14 min-h-[80vh] border-t pb-40">
@@ -51,7 +55,7 @@ const Orders = () => {
               <div className="flex items-start gap-6">
                 <img
                   className="w-16 sm:w-20"
-                  src={item.image || assets.defaultImage} // Fallback image if missing
+                  src={item.image || assets.defaultImage}
                   alt={item.name}
                 />
                 <div>
@@ -67,7 +71,6 @@ const Orders = () => {
 
               <div className="flex items-center gap-4">
                 <div className="text-sm font-medium">
-                  {/* Order total quantity */}
                   Quantity: {item.quantity}
                 </div>
               </div>
@@ -80,7 +83,7 @@ const Orders = () => {
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 ml-2">
                 <button
                   className="bg-yellow-400 px-4 py-2 rounded text-black font-medium hover:bg-yellow-500"
-                  onClick={() => handleReorder(item)} // Add item to the cart
+                  onClick={() => handleReorder(item)}
                 >
                   Buy it again
                 </button>
@@ -97,10 +100,16 @@ const Orders = () => {
         )}
       </div>
 
-      {/* Bottom Left Cart Total */}
+      {/* Bottom Right Total Amount & View Details Button */}
       <div className="flex justify-end my-20">
         <div className="w-full sm:w-[450px]">
-          <CartTotal />
+          {orderData.length > 0 ? (
+            <div className="text-right font-bold text-lg">
+              Total Amount: Rs. {totalAmount.toFixed(2)}
+            </div>
+          ) : (
+            <p>No orders placed yet.</p>
+          )}
           <div className="w-full text-end">
             <button
               onClick={() => navigate("/orderdetails")}
