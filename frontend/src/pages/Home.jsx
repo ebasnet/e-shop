@@ -4,7 +4,7 @@ import LatestCollection from "../components/LatestCollection";
 import BestSellers from "../components/BestSellers";
 import Policy from "../components/Policy";
 import NewsLetter from "../components/NewsLetter";
-import Sample from "./sample";
+import Sample from "../pages/Sample";
 
 const Home = () => {
   return (
